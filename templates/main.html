@@ -1,4 +1,47 @@
 {% extends "layout.html" %}
 {% block body %}
   <div id="chart" style="width:100%; height:400px;"></div>
+  <script>
+  $(function () { 
+    var today = new Date();
+    var monthAgo = new Date();
+    monthAgo.setDate(today.getDate()-28);
+   
+    $('#chart').highcharts({
+        chart: {
+            type: 'line'
+        },
+        title: {
+            text: 'Raw Activity'
+        },
+        legend: {
+            enabled: false,
+        },
+        xAxis: {
+            minorTickInterval: 0,
+            minorTickPosition:'',
+
+            type:'datetime',
+            min: Date.UTC(monthAgo.getYear(), monthAgo.getMonth(), monthAgo.getDate()),
+            max: Date.UTC(today.getYear(), today.getMonth(), today.getDate()),
+            labels: {
+                step: 1,
+            },
+            dateTimeLabelFormats: {
+                day: '%b %e'
+            }                    
+        },
+        yAxis: {
+            title: {
+                text: '# of active seconds in 5 minutes'
+            }
+        },
+        series: [{
+            data: [300, 200, 0, 0, 200, 300, 100, 200, 200, 300, 200, 100],
+            pointStart: Date.UTC(monthAgo.getYear(), monthAgo.getMonth(), monthAgo.getDate()),
+            pointInterval: 24 * 3600 * 1000
+        }]
+    });
+});
+  </script>
 {% endblock %}
