@@ -24,16 +24,14 @@ try:
     while 1:
         time.sleep(300)
         
+        part = 0        
         if time_up > 0:
             part = time.time() - time_up
             time_count += part
         
         print str(datetime.datetime.now()) + ": detected motion for " + str(time_count) + "s"
         
-        if time_up > 0:
-            time_count = -part
-        else:
-            time_count = 0 
+        time_count = -part
 except KeyboardInterrupt:
     print "\nQuitting ..."
 except:
