@@ -11,9 +11,8 @@ def motion_detected(pin):
     if GPIO.input(pin):
         time_up = time.time()
     else:
-        if time_up > 0:
-            time_count += (time.time() - time_up)
-            time_up = 0
+        time_count += (time.time() - time_up)
+        time_up = 0
 
 PIR_PIN = 7
 
@@ -23,9 +22,18 @@ GPIO.setup(PIR_PIN, GPIO.IN)
 try:
     GPIO.add_event_detect(PIR_PIN, GPIO.BOTH, callback=motion_detected)
     while 1:
-        time.sleep(30)
+        time.sleep(300)
+        
+        if time_up > 0:
+            part = time.time() - time_up
+            time_count += part
+        
         print str(datetime.datetime.now()) + ": detected motion for " + str(time_count) + "s"
-        time_count = 0 
+        
+        if time_up > 0:
+            time_count = -part
+        else:
+            time_count = 0 
 except KeyboardInterrupt:
     print "\nQuitting ..."
 except:
