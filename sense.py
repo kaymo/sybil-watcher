@@ -1,9 +1,22 @@
 import RPi.GPIO as GPIO
 import sys, time, datetime
+import sqlite3 as lite
 
+# Connect to database
+con = None
+cur = None
+try: 
+    con = lite.connect('sybil.db')
+    cur = con.cursor()
+
+except lite.Error, e:
+    print "Error: {}".format(e.args[0])
+
+# Time trackers
 time_up = 0
 time_count = 0
 
+# Motion callback (rising and falling events)
 def motion_detected(pin):
     global time_up
     global time_count
@@ -14,28 +27,48 @@ def motion_detected(pin):
         time_count += (time.time() - time_up)
         time_up = 0
 
+# Pi setup
 PIR_PIN = 7
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(PIR_PIN, GPIO.IN)
 
+# Start detection
 try:
+    # Kick off event thread
     GPIO.add_event_detect(PIR_PIN, GPIO.BOTH, callback=motion_detected)
+    
+    # Infinite loop to summarise the motion detected
     while 1:
-        time.sleep(300)
+        time.sleep(10)
         
+        # If motion is currently detected then add to interval total
         part = 0        
         if time_up > 0:
             part = time.time() - time_up
             time_count += part
         
+        # Add to the db and print to console
+        if cur:
+            cur.execute('INSERT INTO sybil (active) VALUES (?)', int(time_count) )
         print str(datetime.datetime.now()) + ": detected motion for " + str(time_count) + "s"
         
+        # Reset for the next interval
         time_count = -part
+
+except lite.Error, e:
+    print "Error: {}".format(e.args[0])
+
 except KeyboardInterrupt:
     print "\nQuitting ..."
+
 except:
     print "Error ... "
+
 finally:
+    # Pi cleanup
     GPIO.cleanup()
-sys.exit(1)
+
+    # Close db connection
+    if con:
+        con.close()
