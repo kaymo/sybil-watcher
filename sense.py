@@ -50,8 +50,10 @@ try:
         
         # Add to the db and print to console
         if cur:
-            cur.execute('INSERT INTO sybil (active) VALUES (?)', int(time_count) )
-        print str(datetime.datetime.now()) + ": detected motion for " + str(time_count) + "s"
+            cur.execute('INSERT INTO sybil (active) VALUES (?)', (round(time_count,3),) )
+            con.commit()
+		
+        print str(datetime.datetime.now()) + ": detected motion for " + str(round(time_count,3)) + "s"
         
         # Reset for the next interval
         time_count = -part
@@ -61,9 +63,6 @@ except lite.Error, e:
 
 except KeyboardInterrupt:
     print "\nQuitting ..."
-
-except:
-    print "Error ... "
 
 finally:
     # Pi cleanup
