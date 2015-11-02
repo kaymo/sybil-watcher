@@ -40,7 +40,7 @@ try:
     
     # Infinite loop to summarise the motion detected
     while 1:
-        time.sleep(10)
+        time.sleep(300)
         
         # If motion is currently detected then add to interval total
         part = 0        
