@@ -50,7 +50,7 @@ try:
             time_count += part
         
         # Add to the db and print to console
-        if cur:
+        if cur and time_count < 310.0:
             cur.execute('INSERT INTO sybil (active) VALUES (?)', (round(time_count,3),) )
             con.commit()
 		
