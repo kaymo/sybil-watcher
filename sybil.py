@@ -1,7 +1,7 @@
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
 import sqlite3 as lite
-import sys 
+import sys, datetime, time 
 
 app = Flask('sybil')
 app.config['DEBUG'] = False
@@ -15,13 +15,21 @@ def print_rows():
         con = lite.connect('sybil.db')
         cur = con.cursor()
 
-        cur.execute("SELECT count(*) FROM sybil")
+        cur.execute("SELECT strftime('%s',time), active FROM sybil WHERE time BETWEEN datetime('now', '-28 days') AND datetime('now', 'localtime')")
 
-        row = cur.fetchone()
-        count = row[0]
+        rows = cur.fetchall()
 
-        display = "{} entries in table".format(count)
-
+        last_seen = 0
+        data = []
+        for row in rows:
+            active = row[1]
+            if row[1] > 1000.0:
+                active = 0.0
+            data.append( "[{},{}]".format(int(row[0])*1000, active) )
+            if active > 0.0:
+                last_seen = row[0]
+        data = "[" +','.join(data)+ "]"
+        display = "Sybil last spotted at {}".format(datetime.datetime.fromtimestamp(int(last_seen)))
     except lite.Error, e:
         display = "Error: {}".format(e.args[0])
     
@@ -29,7 +37,7 @@ def print_rows():
         if con:
             con.close()
 
-    return render_template('main.html', display=display)
+    return render_template('main.html', display=display, data=data)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')

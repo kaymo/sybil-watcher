@@ -13,8 +13,9 @@ except lite.Error, e:
     print "Error: {}".format(e.args[0])
 
 # Time trackers
-time_up = 0
-time_count = 0
+time_up = 0.0
+time_count = 0.0
+app_start = time.time()
 
 # Motion callback (rising and falling events)
 def motion_detected(pin):
@@ -44,7 +45,7 @@ try:
         
         # If motion is currently detected then add to interval total
         part = 0        
-        if time_up > 0:
+        if time_up > app_start:
             part = time.time() - time_up
             time_count += part
         
