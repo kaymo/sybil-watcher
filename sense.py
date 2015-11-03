@@ -46,11 +46,9 @@ try:
         time.sleep(INTERVAL)
         
         # If motion is currently detected then add to interval total
-        part = 0.0        
         if time_up > app_start:
-            part = time.time() - time_up
+            time_count += time.time() - time_up
             time_up = time.time()
-            time_count += part
         
         # Add to the db and print to console
         if cur and (time_count < (INTERVAL+10)):
