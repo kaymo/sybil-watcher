@@ -33,7 +33,7 @@ def activity_chart():
         data = "[" +','.join(data)+ "]"
         last_seen = time.strftime("%b %e, %I:%M%p", time.gmtime(last_seen)).capitalize().replace(", 0",", ")
         
-        display = "Sybil last seen: {}".format( last_seen )
+        display = "Last active: {}".format( last_seen )
 
     except sqlite3.Error, e:
         display = "Error: {}".format(e.args[0])
