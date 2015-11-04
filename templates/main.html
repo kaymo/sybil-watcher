@@ -8,7 +8,7 @@
             type: 'line'
         },
         title: {
-            text: 'Activity'
+            text: ''
         },
         legend: {
             enabled: false,
@@ -32,8 +32,12 @@
         },
         series: [{
             name:'Activity',
-            data: {{data|safe}}
-        }]
+            data: {{data|safe}},
+            color: "#00CCCC"
+        }],
+        tooltip: {
+            valueSuffix: "s"
+        }
     });
 });
   </script>
