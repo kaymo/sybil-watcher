@@ -35,7 +35,7 @@ def activity_chart():
         
         display = "Sybil last seen: {}".format( last_seen )
 
-    except lite.Error, e:
+    except sqlite3.Error, e:
         display = "Error: {}".format(e.args[0])
 
     # Close the db connection    
