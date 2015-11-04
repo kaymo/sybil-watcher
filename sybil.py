@@ -1,6 +1,6 @@
 # Requires Flask and SQLite3
 from flask import Flask, url_for, render_template
-import sqlite3, datetime
+import sqlite3, time
 
 # Create the app
 app = Flask('sybil')
@@ -26,12 +26,14 @@ def activity_chart():
             # [x,y] data pair where x is the number of milliseconds since epoch
             data.append( "[{},{}]".format(int(row[0])*1000, row[1]) )
             
-            # About 30s out of the 5 minutes can be attributed to uninteresting 'noise' (possibly Sybil rolling over but unlikely)
+            # About 10% can be attributed to uninteresting 'noise' (possibly Sybil rolling over but unlikely)
             if row[1] > 30.0:
-                last_seen = row[0]
+                last_seen = int(row[0])
 
         data = "[" +','.join(data)+ "]"
-        display = "Sybil last spotted at {}".format(datetime.datetime.fromtimestamp(int(last_seen)))
+        last_seen = time.strftime("%b %e, %I:%M%p", time.gmtime(last_seen)).capitalize().replace(", 0",", ")
+        
+        display = "Sybil last seen: {}".format( last_seen )
 
     except lite.Error, e:
         display = "Error: {}".format(e.args[0])
