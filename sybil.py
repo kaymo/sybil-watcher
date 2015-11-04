@@ -1,44 +1,48 @@
-from flask import Flask, request, session, g, redirect, url_for, \
-     abort, render_template, flash
-import sqlite3 as lite
-import sys, datetime, time 
+# Requires Flask and SQLite3
+from flask import Flask, url_for, render_template
+import sqlite3, datetime
 
+# Create the app
 app = Flask('sybil')
 app.config['DEBUG'] = False
 
+# Index page
 @app.route("/") 
-
-def print_rows():
-    con = None
-    
+def activity_chart():
     try: 
-        con = lite.connect('sybil.db')
+        # Connect to the db
+        con = sqlite3.connect('sybil.db')
         cur = con.cursor()
-
+        
+        # Get all entries in the past 28 days and format the time as unix epoch time
         cur.execute("SELECT strftime('%s',time), active FROM sybil WHERE time BETWEEN datetime('now', '-28 days') AND datetime('now', 'localtime')")
-
         rows = cur.fetchall()
 
+        # Form the data that will passed to the JS and HTML
         last_seen = 0
         data = []
         for row in rows:
-            active = row[1]
-            if row[1] > 1000.0:
-                active = 0.0
-            data.append( "[{},{}]".format(int(row[0])*1000, active) )
-            if active > 0.0:
+            
+            # [x,y] data pair where x is the number of milliseconds since epoch
+            data.append( "[{},{}]".format(int(row[0])*1000, row[1]) )
+            
+            # About 30s out of the 5 minutes can be attributed to uninteresting 'noise' (possibly Sybil rolling over but unlikely)
+            if row[1] > 30.0:
                 last_seen = row[0]
+
         data = "[" +','.join(data)+ "]"
         display = "Sybil last spotted at {}".format(datetime.datetime.fromtimestamp(int(last_seen)))
+
     except lite.Error, e:
         display = "Error: {}".format(e.args[0])
-    
+
+    # Close the db connection    
     finally: 
         if con:
             con.close()
 
     return render_template('main.html', display=display, data=data)
 
+# Start the app and make available to all
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
-
