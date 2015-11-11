@@ -14,8 +14,8 @@ def activity_chart():
         con = sqlite3.connect('sybil.db')
         cur = con.cursor()
         
-        # Get all entries in the past 28 days and format the time as unix epoch time
-        cur.execute("SELECT strftime('%s',time), active FROM sybil WHERE time BETWEEN datetime('now', '-28 days') AND datetime('now', 'localtime')")
+        # Get all entries in the past 5 days and format the time as unix epoch time
+        cur.execute("SELECT strftime('%s',time), active FROM sybil WHERE time BETWEEN datetime('now', '-5 days') AND datetime('now', 'localtime')")
         rows = cur.fetchall()
 
         # Form the data that will passed to the JS and HTML
