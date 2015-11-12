@@ -2,9 +2,6 @@
 
 Keeping an eye on Sybil.
 
-### Visit
-http://176.248.142.188:5000
-
 ### Dependencies
 * jQuery v1.8.2
 * Highcharts v4.1.9
@@ -17,3 +14,5 @@ http://176.248.142.188:5000
 * Safari v8.0.6
 * Firefox v41.0.2
 * Chrome v46.0.2490.80
+
+Kim Mroz, 2015
